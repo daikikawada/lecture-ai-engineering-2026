@@ -56,6 +56,19 @@ def test_make_quiz_reports_when_lecture_has_no_terms():
     assert "第0回の用語が見つかりませんでした。" == tools.make_quiz(0)
 
 
+def test_save_learning_log_creates_directory_and_writes_utf8_content(tmp_path, monkeypatch):
+    data_dir = tmp_path / "data"
+    monkeypatch.setattr(tools, "DATA_DIR", data_dir)
+    content = "# 第3回の学習記録\n\nエージェントを学びました。"
+
+    result = tools.save_learning_log(3, content)
+
+    assert (tmp_path / "learning_log" / "lecture_3.md").read_text(
+        encoding="utf-8"
+    ) == content
+    assert result == "第3回の学習記録を保存しました: learning_log/lecture_3.md"
+
+
 def test_default_question_of_lecture1_is_answerable_from_glossary():
     """第1回の既定の質問（app.ask）は、第3回のエージェントが用語集で正しく答えられること。"""
     from app.ask import DEFAULT_QUESTION

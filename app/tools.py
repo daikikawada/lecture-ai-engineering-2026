@@ -99,3 +99,18 @@ def make_quiz(lecture: int) -> str:
         },
         ensure_ascii=False,
     )
+
+
+def save_learning_log(lecture: int, content: str) -> str:
+    """学習の記録をリポジトリ直下の learning_log/ に UTF-8 で保存する。
+
+    入力引数：
+     lecture (int)：第何回の学習記録か
+     content (str)：保存したい学習内容
+    """
+    log_dir = DATA_DIR.parent / "learning_log"
+    log_dir.mkdir(exist_ok=True)
+
+    filename = f"lecture_{lecture}.md"
+    (log_dir / filename).write_text(content, encoding="utf-8")
+    return f"第{lecture}回の学習記録を保存しました: learning_log/{filename}"
