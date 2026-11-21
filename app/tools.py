@@ -210,3 +210,19 @@ def save_learning_log(lecture: int, content: str) -> str:
     filename = f"lecture_{lecture}.md"
     (log_dir / filename).write_text(content, encoding="utf-8")
     return f"第{lecture}回の学習記録を保存しました: learning_log/{filename}"
+
+
+
+def search_graph_multi(queries: list[str]) -> str:
+    """質問を異なる2つの論点に分けてGraph検索する。
+
+    複数の話題を組み合わせる質問に使う。
+    queriesには、各論点を表す検索語を2つ指定する。
+    返された各グループの本文を確認して回答する。
+    """
+    from app.retrieval import search_graph_multi as retrieve
+
+    return json.dumps(
+        retrieve(queries),
+        ensure_ascii=False,
+    )
