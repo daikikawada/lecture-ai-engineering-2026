@@ -185,6 +185,54 @@ def search_graph(query: str) -> dict:
             "max_hops": GRAPH_HOPS}
 
 
+def search_graph_multi(queries: list[str]) -> dict:
+    """2つの検索語でGraph探索を行い、重複を除いて統合する。
+
+    - 各検索語につき最大5ページを採用する。
+    - 全体では最大10ページ。
+    - どの検索語で取得したかを保持する。
+    """
+    if (
+        len(queries) != 2
+        or any(not isinstance(q, str) or not q.strip() for q in queries)
+    ):
+        raise ValueError("検索語を2つ指定してください。")
+
+    groups = []
+    seen_pages = set()
+
+    for query in queries:
+        result = search_graph(query.strip())
+
+        # ベクトル検索の入口 + Graphから展開した候補
+        candidates = result["seeds"] + result["expanded"]
+
+        selected = []
+
+        for page in candidates:
+            page_id = page["page_id"]
+
+            # 他の検索語ですでに取得したページは除外
+            if page_id in seen_pages:
+                continue
+
+            selected.append(page)
+            seen_pages.add(page_id)
+
+            if len(selected) >= 5:
+                break
+
+        groups.append({
+            "query": query,
+            "results": selected,
+        })
+
+    return {
+        "groups": groups,
+        "total_pages": len(seen_pages),
+    }
+
+
 
 def run_full_context(agent, question: str, model, instructions: str, prompt_template: str):
     """全資料を一括投入し、検索ツールを使わずに回答する。"""

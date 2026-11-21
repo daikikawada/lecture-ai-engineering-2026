@@ -1,0 +1,34 @@
+[model] gemini-3.5-flash-lite
+第2回の講義資料に基づき、RAGとFine-Tuningの使い分け、およびLoRAとQLoRAの学習・圧縮対象について解説します。
+
+---
+
+### 1. RAG と Fine-Tuning の使い分け
+
+講義資料では、「振る舞い」はプロンプトで直らなければ Fine-Tuning（FT）、「知識」の追加ならまず検索（RAG）を基本線とするよう解説されています（第2回・PDF p.46）。
+
+* **新しい知識を追加したい場合（RAGが向く理由）**
+  * 新しい事実や最新の資料などの「知識」をFTでモデルに覚えさせるのは非効率であり、覚えるほど誤り（ハルシネーション）が増えるという研究報告があります。そのため、知識の追加にはまず検索を活用する RAG が適しています（第2回・PDF p.46, p.47）。
+* **回答形式などの振る舞いを改善したい場合（Fine-Tuningが向く理由）**
+  * 出力形式、口調、手順の守り方といった「振る舞い」は、少量の手本を用いた Fine-Tuning（またはプロンプト）によって大きく変えることができます（第2回・PDF p.46, p.47）。
+
+---
+
+### 2. LoRA と QLoRA で学習・圧縮するもの
+
+LoRA と QLoRA は、モデル全体のパラメータを更新するのではなく、一部だけを効率よく学習する手法（PEFT）の一種です（第2回・PDF p.51）。それぞれが対象とするものや圧縮するものは以下の通りです。
+
+* **LoRA（Low-Rank Adaptation）**
+  * **学習するもの**: 元のモデルの重み（本体）は固定したまま、細長い2つの小さな行列の積（低ランクの差分行列）だけを学習します（第2回・PDF p.51, p.52）。
+* **QLoRA**
+  * **学習するもの**: LoRA と同様に、追加の小さな差分（行列）を学習します（第2回・PDF p.51, p.52）。
+  * **圧縮するもの**: 元のモデルの重み本体を **4bit** に量子化（数値を粗く保存）して圧縮することで、消費メモリをさらに削減します（第2回・PDF p.51, p.52）。
+
+--- trace ---
+[tool call]   search_graph({'query': 'RAG Fine-Tuning 使い分け LoRA QLoRA 第2回'})
+[tool return] search_graph -> {"seeds": [{"page_id": "lec02-main-p047", "document_id": "lec02-main", "lecture": 2, "document_title": "基盤モデルの仕組み", "sec…
+[tool call]   search_graph({'query': 'LoRA QLoRA 学習 圧縮 第2回'})
+[tool return] search_graph -> {"seeds": [{"page_id": "lec02-main-p052", "document_id": "lec02-main", "lecture": 2, "document_title": "基盤モデルの仕組み", "sec…
+[time] 回答完了まで 13.08 秒（検索・埋め込みを含む）
+[usage] 入力 16,584 tokens / 出力 587 tokens / モデル応答 3 回
+[cost] 生成APIの推定コスト: $0.005343 USD（埋め込み・索引構築分は含まない）
